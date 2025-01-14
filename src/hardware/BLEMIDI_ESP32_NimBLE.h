@@ -66,6 +66,7 @@ protected:
     {
         if (_bleMidiTransport->_disconnectedCallback)
             _bleMidiTransport->_disconnectedCallback();
+        NimBLEDevice::startAdvertising();
     }
 };
 
@@ -80,13 +81,13 @@ public:
 protected:
     BLEMIDI_ESP32_NimBLE *_bluetoothEsp32 = nullptr;
 
-    void onConnect(BLEServer *)
+    void onConnect(BLEServer * pServer, NimBLEConnInfo &pConnInfo) override
     {
         if (_bluetoothEsp32)
             _bluetoothEsp32->connected();
     };
 
-    void onDisconnect(BLEServer *)
+    void onDisconnect(BLEServer *, NimBLEConnInfo& connInfo, int reason) override
     {
         if (_bluetoothEsp32)
             _bluetoothEsp32->disconnected();
@@ -104,7 +105,7 @@ public:
 protected:
     BLEMIDI_ESP32_NimBLE *_bluetoothEsp32 = nullptr;
 
-    void onWrite(BLECharacteristic *characteristic)
+    void onWrite(BLECharacteristic *characteristic, NimBLEConnInfo& connInfo) override
     {
         std::string rxValue = characteristic->getValue();
         if (rxValue.length() > 0)
@@ -123,7 +124,7 @@ bool BLEMIDI_ESP32_NimBLE::begin(const char *deviceName, BLEMIDI_Transport<class
     // To communicate between the 2 cores.
     // Core_0 runs here, core_1 runs the BLE stack
     mRxQueue = xQueueCreate(64, sizeof(uint8_t)); // TODO Settings::MaxBufferSize
-
+    NimBLEDevice::setSecurityAuth(BLE_SM_PAIR_AUTHREQ_BOND | BLE_SM_PAIR_AUTHREQ_SC);
     _server = BLEDevice::createServer();
     _server->setCallbacks(new MyServerCallbacks(this));
     _server->advertiseOnDisconnect(true);
@@ -141,16 +142,15 @@ bool BLEMIDI_ESP32_NimBLE::begin(const char *deviceName, BLEMIDI_Transport<class
 
     _characteristic->setCallbacks(new MyCharacteristicCallbacks(this));
 
-    auto _security = new NimBLESecurity();
-    _security->setAuthenticationMode(ESP_LE_AUTH_BOND);
-
     // Start the service
     service->start();
 
     // Start advertising
-    _advertising = _server->getAdvertising();
+    _advertising = NimBLEDevice::getAdvertising();
+    _advertising->setName(deviceName);
     _advertising->addServiceUUID(service->getUUID());
     _advertising->setAppearance(0x00);
+    _advertising->enableScanResponse(true);
     _advertising->start();
 
     return true;
