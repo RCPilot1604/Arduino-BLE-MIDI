@@ -18,8 +18,8 @@ arduino-cli core update-index --additional-urls https://raw.githubusercontent.co
 arduino-cli core update-index
 
 # Install Arduino AVR core
-arduino-cli core install arduino:avr
-arduino-cli core install arduino:samd
+# arduino-cli core install arduino:avr
+# arduino-cli core install arduino:samd
 # arduino-cli core install esp8266:esp8266
 arduino-cli core install esp32:esp32
 
@@ -30,7 +30,7 @@ arduino-cli board list
 ln -s $GITHUB_WORKSPACE $HOME/Arduino/libraries/CI_Test_Library
 
 arduino-cli lib install "MIDI library"
-arduino-cli lib install ArduinoBLE
+# arduino-cli lib install ArduinoBLE
 arduino-cli lib install NimBLE-Arduino
 
 # Compile all *.ino files for the Arduino Uno
@@ -49,8 +49,6 @@ arduino-cli lib install NimBLE-Arduino
 # done
 
 # Compile all *.ino files for the Arduino Uno
-
-arduino-cli core install esp32:esp32
 
 for f in **/*.ino ; do
      arduino-cli compile -b esp32:esp32:esp32doit-devkit-v1 $f
