@@ -183,7 +183,7 @@ public:
     bool specificTarget = false;
     bool enableConnection = false;
     std::string nameTarget;
-
+~
 protected:
     void onResult(NimBLEAdvertisedDevice *advertisedDevice)
     {
@@ -194,7 +194,7 @@ protected:
             if (advertisedDevice->isAdvertisingService(NimBLEUUID(SERVICE_UUID)))
             {
                 Serial.println("Found MIDI Service");
-                if (!specificTarget || (advertisedDevice->getName() == nameTarget.c_str() || advertisedDevice->getAddress() == nameTarget))
+                if (!specificTarget || (advertisedDevice->getName() == nameTarget.c_str() || advertisedDevice->getAddress() == nameTarget.c_str()))
                 {
                     /** Ready to connect now */
                     doConnect = true;
