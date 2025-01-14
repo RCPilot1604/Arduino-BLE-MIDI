@@ -53,5 +53,5 @@ arduino-cli lib install NimBLE-Arduino
 arduino-cli core install esp32:esp32
 
 for f in **/*.ino ; do
-     arduino-cli compile -b esp32:esp32:esp32da $f
+     arduino-cli compile -b esp32:esp32:esp32doit-devkit-v1 $f
 done
