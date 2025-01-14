@@ -49,6 +49,9 @@ arduino-cli lib install NimBLE-Arduino
 # done
 
 # Compile all *.ino files for the Arduino Uno
+
+arduino-cli core install esp32:esp32
+
 for f in **/*.ino ; do
-     arduino-cli compile -b arduino:esp32:esp32da $f
+     arduino-cli compile -b esp32:esp32:esp32da $f
 done
